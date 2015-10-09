@@ -6,7 +6,7 @@
 
 
 from __future__ import print_function
-from commutils.cli import register_maker,run, subprocess_run,wrapper_decorator
+from commutils.cli import register_maker,run, subprocess_run,wrapper_decorator,autokwoargs
 from commutils.project_gen import project_gen
 import functools
 
@@ -66,6 +66,7 @@ def install():
 
 @register
 @check_setup_py
+@autokwoargs
 def upload(test=False):
     if test:
         command='python setup.py sdist upload -r testpypi '
