@@ -5,6 +5,13 @@
 
 
 
+import  six
+if six.PY2:
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+
+
 
 if __name__ == '__main__':
     pass

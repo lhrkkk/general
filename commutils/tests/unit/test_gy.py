@@ -8,7 +8,7 @@ import unittest
 
 from commutils import gy
 
-class TestGit(unittest.TestCase):
+class TestGy(unittest.TestCase):
 
     def setUp(self):
         pass

@@ -77,6 +77,8 @@ def register_maker():
 
 def subprocess_run(command):
     return subprocess.call(shlex.split(command))
+def subprocess_shell(command):
+    return subprocess.Popen(command,shell=True)
 
 def subprocess_check_run(command):
     return subprocess.check_call(shlex.split(command))

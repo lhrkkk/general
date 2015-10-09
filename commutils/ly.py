@@ -7,8 +7,10 @@
 
 from __future__ import print_function
 from commutils.cli import register_maker,run, subprocess_run,wrapper_decorator,autokwoargs
-from commutils.project_gen import project_gen
+from commutils.project_gen import new_project,update_project
 import functools
+import commutils.yml_config as config
+from commutils.gy import commit,push
 
 import os
 import re
@@ -17,9 +19,6 @@ from jinja2 import Template
 
 register,_functions=register_maker()
 
-@register
-def gy():
-    pass
 
 def check_setup_py_origin(f):
     ## 保持原函数的__doc__和__name__
@@ -61,6 +60,7 @@ def build():
 @register
 @check_setup_py
 def install():
+    build()
     command='python setup.py install --prefix=~/.local'
     subprocess_run(command)
 
@@ -69,9 +69,13 @@ def install():
 @autokwoargs
 def upload(test=False):
     if test:
+        command='python setup.py register -r testpypi'
+        subprocess_run(command)
         command='python setup.py sdist upload -r testpypi '
         subprocess_run(command)
     else:
+        command='python setup.py register -r pypi'
+        subprocess_run(command)
         command='python setup.py sdist upload -r pypi '
         subprocess_run(command)
 
@@ -79,14 +83,19 @@ def upload(test=False):
 
 @register
 @check_setup_py
+@autokwoargs
 def pip_install(test=False):
     command="pip install -i https://pypi.python.org/pypi commutils --user --upgrade"
     subprocess_run(command)
 
 @register
 @check_setup_py
-def detox():
-    command='detox'
+@autokwoargs
+def detox(r=False):
+    if not r:
+        command='detox'
+    else:
+        command='detox -r'
     subprocess_run(command)
 
 
@@ -95,8 +104,13 @@ def detox():
 @register
 @check_setup_py
 def init_test():
+    # todo: bugfix 处理文件夹加__init__.py的形式.
 
-    package_dir="commutils"
+
+    config.check_config('config.yml')
+    package_dir=config.project['name']
+
+    # package_dir="commutils"
     unit_test_dir=os.path.join(package_dir,"tests/unit")
 
     exclude_dir=set(['tests','target','template','__pycache__'])
@@ -106,7 +120,7 @@ def init_test():
         # 本地修改, 另外列表生成式里面的变量不是局域的, 在用完后会保留.
         dirs[:] = [d for d in dirs if d not in exclude_dir]
         files[:] = [f for f in files if py_pattern.match(f)]
-        print(root,dirs,files)
+        # print(root,dirs,files)
         for file in files:
             py_file=os.path.join(root,file)
             # test_file=os.path.join(root.replace(package_dir,unit_test_dir),'test_'+file)
@@ -139,7 +153,7 @@ def init_test():
                 if not os.path.exists(test_root):
                     os.makedirs(test_root)
 
-                with open(os.path.join(unit_test_dir,'template_test.py')) as f:
+                with open(os.path.join('template_test.pytemplate')) as f:
                     content=Template(f.read()).render(module_path=module_path,module_name=module_name,all_functions=all_functions)
                 # print content
 
@@ -148,8 +162,39 @@ def init_test():
 
 # project_gen=register(project_gen)
 @register
-def pg():
-    project_gen()
+def new(name='new'):
+    new_project(name)
+    # print(os.path.abspath('.'))
+
+
+@register
+@check_setup_py
+def project_update():
+    update_project()
+    # print(os.path.abspath('.'))
+
+
+
+@register
+def self_update():
+    current=os.path.abspath('.')
+    os.chdir("/Users/lhr/_action/python/projects/commutils")
+    commit()
+    subprocess_run("bin/ly install")
+    os.chdir(current)
+
+@register
+def publish():
+    push()
+    build()
+    self_update()
+    upload()
+
+@register
+def local_publish():
+    commit()
+    build()
+    self_update()
 
 def manage():
     # alternative分派, 默认分派是函数名, 用字典可以修改默认分派名, 用@kwoargs可以对关键字参数进行分派

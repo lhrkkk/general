@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Author  : lhr (airhenry@gmail.com)
 # @Link    : http://about.me/air.henry
@@ -72,6 +72,13 @@ bug: 创建, 合并, 删除
 '''
 
 from __future__ import print_function
+## 解决utf8的问题
+import  six
+if six.PY2:
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+
 
 
 from commutils.cli import (
@@ -87,6 +94,8 @@ VERSION=0.1
 # todo: 全局变量的问题. 固定, 带有名字空间. 可进一步查证.
 # import进来的函数不能使用本地的全局常量, 函数内部的所有量都在原来的名字空间. import不改变本名. 只是用本地符号引用import进来的本名. 因此原有的全局常量不会被覆盖.
 
+## ====================
+## 基础任务
 
 @register
 def version(the_version=VERSION):
@@ -107,10 +116,19 @@ def create():
 
 @register
 def clone(repo):
+    '''
+    clone from github
+    :param repo:
+    :return:
+    '''
     subprocess.check_call(['hub','clone',repo])
     return 'SUCCESS: cloned repo from remote'
 @register
 def fork():
+    '''
+    fork from github
+    :return:
+    '''
     subprocess.check_call(['hub','clone'])
     return 'SUCCESS: cloned repo from remote'
 @register
@@ -130,6 +148,24 @@ def commit(m=None):
     return "SUCCESS: committed successful"
 
 @register
+@autokwoargs
+def fixup(m=None):
+    # todo: 完善fixup和autosquash
+    '''
+    git add & commit all changes to local repo.
+    :return:
+    '''
+    sh.git.add('.')
+    sh.git.status()
+    if not m:
+        subprocess.call(['git', 'commit','--fixup'])
+    else:
+        subprocess.call(['git', 'commit','--fixup','-m',m])
+
+    return "SUCCESS: committed successful"
+
+
+@register
 # @kwoargs('from_branch')
 def newbranch(branch_name,from_branch='master'):
     '''
@@ -140,12 +176,17 @@ def newbranch(branch_name,from_branch='master'):
     # if not from_branch:
     #     from_branch='master'
     subprocess.check_call(['git','checkout',from_branch])
+    flag='y'
     try:
         subprocess.check_call(['git','pull'])
     except:
-        return "ERROR: no remote source specified"
-    subprocess.check_call(['git','checkout','-b',branch_name])
-    return "SUCCESS: new branch %s created and checked out"%branch_name
+        print("ERROR: no remote source specified")
+        flag=raw_input("do you want to continue?")
+    if flag=='y' or flag=='yes':
+        subprocess.check_call(['git','checkout','-b',branch_name])
+        return "SUCCESS: new branch %s created and checked out"%branch_name
+    else:
+        return
 
 @register
 def init():
@@ -155,11 +196,13 @@ def init():
     '''
     # subprocess.call['git','init']
     subprocess.check_call(['git','init'])
+    subprocess.check_call(['touch','readme.md'])
+    commit(m='init commit')
     return "SUCCESS: inited a new project."
 @register
 def add_remote():
     '''
-    push master to remote repo
+    add remote repo
     :return: the status whether successful
     '''
     project_name=os.path.basename(os.path.abspath('.'))
@@ -169,19 +212,22 @@ def add_remote():
     return "SUCCESS: pushed to remote "
 @register
 def browse():
+    '''
+    hub browse
+    :return:
+    '''
     subprocess.check_call(['hub','browse'])
 @register
 def pull():
+    '''
+    wrapper for git pull
+    :return:
+    '''
     subprocess_run('git pull')
-@register
-def init_remote():
-    init()
-    create()
-    add_remote()
-    push()
+
 @register
 def reset():
-    # todo: implement the reset
+    # to1do: implement the reset
     '''
     :return:
     '''
@@ -198,31 +244,14 @@ def diff():
     '''
     :return:
     '''
-    pass
-@register
-def sync():
-    '''
-    sync remote changes to local branch.
-    :return:
-    '''
-    # git fetch origin
-    subprocess.check_call(['git','fetch','origin'])
-    # git rebase origin master
-    subprocess.check_call(['git','rebase','origin/master'])
-    return "SUCCESS: synced to remote repo."
-@register
-def rebase():
-    # git rebase -i origin/master
-    # todo: cherry-pick 什么意思
-    subprocess.check_call(['git','rebase','-i','--autosquash','origin/master'])
-    return
+    subprocess_check_run('git diff')
 @register
 def find_branch_name():
     return subprocess.check_output(shlex.split("git rev-parse --abbrev-ref HEAD")).strip().decode()
 
 @register
 @autokwoargs
-def push(force=False):
+def simplepush(force=False):
     '''
     push 当前分支到远端.
     :param force:
@@ -236,48 +265,6 @@ def push(force=False):
         subprocess.call(['git','push','--force','origin',branch_name])
 
     return
-
-@register
-@autokwoargs
-def branchpush(force=False):
-    '''
-    平时的时候应该维护dev的分支, 如果要merge到主分支的时候, 则rebase成一个点.
-    :return:
-    '''
-    try:
-        commit()
-    except:
-        pass
-    sync()
-    rebase()
-    push(force=force)
-
-@register
-def branch_merge_to(to_branch='master'):
-    '''
-    本地开发的小branch 直接merge进master, 不去远程merge了.
-    :return:
-    '''
-    branch_name=find_branch_name()
-    subprocess_run("git merge "+to_branch)
-    subprocess_run("git checkout "+to_branch)
-    # print("git merge --no-ff "+branch_name)
-    # print( shlex.split("git merge --no-ff "+branch_name))
-    subprocess_run("git merge --no-ff "+branch_name)
-
-    pass
-@register
-def merge():
-
-    branch_name=find_branch_name()
-    if 'feature' in branch_name:
-        feature(merge=True, branch_name=branch_name)
-    elif 'bug-fix' in branch_name:
-        bug_fix(merge=True,branch_name=branch_name)
-    elif 'dev' in branch_name:
-        dev(merge=True,branch_name=branch_name)
-    elif 'release' in branch_name:
-        release(merge=True,branch_name=branch_name)
 @register
 def log():
     '''
@@ -304,6 +291,96 @@ def delete_branch(branch):
 def git_tag(tag):
     subprocess_check_run("git tag -a "+tag)
     return
+
+
+@register
+def sync():
+    '''
+    sync remote changes to local branch.
+    :return:
+    '''
+    # git fetch origin
+    commit()
+    subprocess.check_call(['git','fetch','origin'])
+    # git rebase origin master
+    subprocess.check_call(['git','rebase','origin/master'])
+    return "SUCCESS: synced to remote repo."
+
+@register
+def rebase():
+    # git rebase -i origin/master
+    # todo: cherry-pick 什么意思
+    commit()
+    subprocess.check_call(['git','rebase','-i','--autosquash','origin/master'])
+    return
+
+
+### ==========
+# 组合任务
+@register
+def init_remote():
+    init()
+    create()
+    add_remote()
+    simplepush()
+
+## 和别人合作步骤: 1.下载新建分支,clone, newbranch 2.提交*n, sync, branchpush(sync, rebase, push, ), 3. 发出pull-request
+## 自己分支合并步骤: 1. 初始化init/初始化远程init_remote, 新建dev分支 2. 提交*n, 同步, rebase,(push) 3.merge
+## 发布步骤:push
+
+# commit, sync, rebase, merge
+
+# commit, sync, (rebase), push/merge, 后一个必须有前一个作为前提.
+
+# commit, sync, push/merge
+
+@register
+@autokwoargs
+def push(force=False):
+    '''
+    平时的时候应该维护dev的分支, 如果要merge到主分支的时候或者到push远程的时候, 则rebase成一个点.
+    :return:
+    '''
+    try:
+        commit()
+    except:
+        pass
+    sync()
+    rebase()
+    simplepush(force=force)
+
+
+## merge别人的code的时候往往会先在本地把master merge进分支进行合并, 成功后, 再把分支merge进master
+@register
+def merge(to_branch='master'):
+    '''
+    本地开发的小branch 直接merge进master, 不去远程merge了.
+    :return:
+    '''
+    branch_name=find_branch_name()
+    commit()
+    sync()
+    rebase()
+    # subprocess_run("git merge "+to_branch)
+    subprocess_run("git checkout "+to_branch)
+    # print("git merge --no-ff "+branch_name)
+    # print( shlex.split("git merge --no-ff "+branch_name))
+    subprocess_run("git merge --no-ff "+branch_name)
+
+# @register
+# def merge2():
+#
+#     branch_name=find_branch_name()
+#     if 'feature' in branch_name:
+#         feature(merge=True, branch_name=branch_name)
+#     elif 'bug-fix' in branch_name:
+#         bug_fix(merge=True,branch_name=branch_name)
+#     elif 'dev' in branch_name:
+#         dev(merge=True,branch_name=branch_name)
+#     elif 'release' in branch_name:
+#         release(merge=True,branch_name=branch_name)
+
+
 @register
 @autokwoargs
 def master():
@@ -317,7 +394,7 @@ def dev(merge=False,branch_name='dev'):
         newbranch('dev')
     checkout('dev')
     if merge:
-        branch_merge_to('master')
+        merge('master')
 @register
 @autokwoargs
 def feature(merge=False,delete=False,name=None,branch_name='feature'):
@@ -328,7 +405,7 @@ def feature(merge=False,delete=False,name=None,branch_name='feature'):
         newbranch(branch_name)
     checkout(branch_name)
     if merge:
-        branch_merge_to(father_name)
+        merge(father_name)
     if delete:
         checkout(father_name)
         delete_branch(branch_name)
@@ -342,8 +419,8 @@ def release(merge=False,delete=False,tag=None,branch_name='release'):
         newbranch(branch_name)
     checkout(branch_name)
     if merge:
-        branch_merge_to('dev')
-        branch_merge_to('master')
+        merge('dev')
+        merge('master')
         # if tag:
         git_tag(branch_name)
     if delete:
@@ -360,8 +437,8 @@ def bug_fix(merge=False,delete=False,tag=None,branch_name='bug-fix'):
         newbranch(branch_name)
     checkout(branch_name)
     if merge:
-        branch_merge_to('dev')
-        branch_merge_to('master')
+        merge('dev')
+        merge('master')
         # if tag:
         git_tag(branch_name)
     if delete:
@@ -379,6 +456,7 @@ def new(branch_name):
         dev(branch_name=branch_name)
     elif 'release' in branch_name:
         release(branch_name=branch_name)
+
 
 
 '''
@@ -436,35 +514,6 @@ def gy():
 
 
 
-    commands = [
-        find_branch_name,
-        merge,
-        release,
-        bug_fix,
-        master,
-        feature,
-        dev,
-        branch_is_exist,
-        init,
-        add_remote,
-        init_remote,
-        newbranch,
-        commit,
-        sync,
-        rebase,
-        push,
-        branchpush,
-        branch_merge_to,
-        clone,
-        create,
-        fork,
-        browse,
-        reset,
-        reset_tree,
-        diff,
-        log,
-        version
-    ]
 
     # import operator
     # todo: 改进: 按字典键排序生成值的列表.

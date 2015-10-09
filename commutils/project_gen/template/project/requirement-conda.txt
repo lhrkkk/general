@@ -1,6 +1,1 @@
-numpy
-pandas
-flask
-ipython
-jupyter
-
+../../../../requirement-conda.txt
