@@ -1,0 +1,8 @@
+[run]
+branch = True
+source = {{ project['name'] }}
+omit = {{ project['name'] }}/tests/*
+
+[report]
+ignore_errors = True
+
