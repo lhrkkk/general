@@ -187,8 +187,8 @@ def self_update():
 def publish():
     push()
     build()
-    self_update()
     upload()
+    self_update()
 
 @register
 def local_publish():

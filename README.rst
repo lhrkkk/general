@@ -20,7 +20,7 @@ some are python packages you can import directly.
 
 ``gy`` is a shell command you can run ``gy --help`` to see the usage. The most useful 3 workflow is  ``init``, ``sync``, ``push/merge``. And the default dev, release branch.
 
-``ly`` is a project manage and you can run ``ly --help`` to see the usage. The most useful command is ``new, ``project-update`` to new and update a project.
+``ly`` is a project manage and you can run ``ly --help`` to see the usage. The most useful command is ``new``, ``project-update`` to new and update a project.
 ``gy self-update`` to update gy locally, is a command when you develop the package and want to refresh the package in system.
 
 
