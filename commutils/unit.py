@@ -5,12 +5,10 @@
 
 
 
-import  six
-if six.PY2:
-    import sys
-    reload(sys)
-    sys.setdefaultencoding('utf8')
+HARTREE_KCAL=627.509469
 
+def hartree_to_kcal(hatree):
+    return hatree*HARTREE_KCAL
 
 
 

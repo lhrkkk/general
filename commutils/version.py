@@ -3,14 +3,10 @@
 # @Author  : lhr (airhenry@gmail.com)
 # @Link    : http://about.me/air.henry
 
+import pbr.version
+from commutils.reflection import module_name
 
-
-import  six
-if six.PY2:
-    import sys
-    reload(sys)
-    sys.setdefaultencoding('utf8')
-
+version_info = pbr.version.VersionInfo(module_name(__file__))
 
 
 

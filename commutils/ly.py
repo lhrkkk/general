@@ -6,7 +6,10 @@
 
 
 from __future__ import print_function
-from commutils.cli import register_maker,run, subprocess_run,wrapper_decorator,autokwoargs
+from commutils.cli import (
+    register_maker,run, subprocess_run,subprocess_shell,
+    wrapper_decorator,autokwoargs,cd
+)
 from commutils.project_gen import new_project,update_project
 import functools
 import commutils.yml_config as config
@@ -54,15 +57,29 @@ def build():
     hello
     :return:
     '''
+    clean_build()
     command='python setup.py sdist'
     subprocess_run(command)
 
 @register
 @check_setup_py
 def install():
-    build()
-    command='python setup.py install --prefix=~/.local'
+    clean_build()
+    command='python setup.py install --record install.txt'
     subprocess_run(command)
+
+@register
+@check_setup_py
+def install_locally():
+    clean_build()
+    command='python setup.py install --prefix=~/.local --record install.txt'
+    subprocess_run(command)
+
+@register
+@check_setup_py
+def uninstall():
+    command='rm -rf `cat install.txt`'
+    subprocess_shell(command)
 
 @register
 @check_setup_py
@@ -173,30 +190,36 @@ def project_update():
     update_project()
     # print(os.path.abspath('.'))
 
+@check_setup_py
+def clean_build():
+    subprocess_run('rm -rf build')
+
 
 
 @register
 def self_update():
     current=os.path.abspath('.')
-    os.chdir("/Users/lhr/_action/python/projects/commutils")
-    commit()
-    subprocess_run("bin/ly install")
-    os.chdir(current)
+    with cd("/Users/lhr/_action/python/projects/commutils"):
+        commit()
+        clean_build()
+        # subprocess_run("commutils/ly.py install")
+        install()
+
 
 @register
 def publish():
     push()
-    build()
-    upload()
-    self_update()
+    build()  # build只生成dist目录的压缩包
+    upload() # 生成压缩包并上传
+    self_update() # 用本地的代码直接build到build目录, 然后安装
 
-@register
-def local_publish():
-    commit()
-    build()
-    self_update()
+# @register
+# def local_publish():
+#     commit()
+#     build()
+#     self_update()
 
-def manage():
+def main():
     # alternative分派, 默认分派是函数名, 用字典可以修改默认分派名, 用@kwoargs可以对关键字参数进行分派
     # run(hello_world,alt={"vvv":version, "no_capitalized":hello_world})
 
@@ -211,6 +234,6 @@ def manage():
 # todo: 模板,
 
 if __name__ == '__main__':
-    manage()
+    main()
 
 

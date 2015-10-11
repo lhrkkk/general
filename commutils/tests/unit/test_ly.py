@@ -74,7 +74,7 @@ class TestLy(unittest.TestCase):
 
     def test_manage(self):
         return
-        ly.manage()
+        ly.main()
 
 
 

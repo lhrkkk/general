@@ -42,14 +42,14 @@ class Register():
     print(_functions)
     '''
     def __init__(self):
-        self._functions={}
+        self.func_dict={}
+        self.func_list=[]
 
     # @staticmethod
     def register(self,f):
-        self._functions[f.__name__]=f
+        self.func_dict[f.__name__]=f
+        self.func_list.append(f)
         return f
-    def functions(self):
-        return self._functions
 
 def register_maker():
     '''
@@ -83,3 +83,41 @@ def subprocess_shell(command):
 def subprocess_check_run(command):
     return subprocess.check_call(shlex.split(command))
 
+class cd:
+    """Context manager for changing the current working directory"""
+    def __init__(self, newPath):
+        self.newPath = os.path.expanduser(newPath)
+
+    def __enter__(self):
+        self.savedPath = os.getcwd()
+        os.chdir(self.newPath)
+
+    def __exit__(self, etype, value, traceback):
+        os.chdir(self.savedPath)
+
+
+## ==================
+
+def quote_against_shell_expansion(s):
+    import pipes
+    return pipes.quote(os.path.expanduser(s))
+
+def put_text_back_into_terminal_input_buffer(text):
+    # use of this means that it only works in an interactive session
+    # (and if the user types while it runs they could insert characters between the characters in 'text'!)
+    import fcntl, termios
+    for c in text:
+        fcntl.ioctl(1, termios.TIOCSTI, c)
+
+def change_parent_process_directory(dest):
+    # the horror
+    put_text_back_into_terminal_input_buffer("cd "+quote_against_shell_expansion(dest)+"\n")
+
+# 直接在shell中改变目录, 模拟终端中输入并回车. 必须在交互终端中使用. 否则找不到设备.
+def cdp(dest):
+    change_parent_process_directory(dest)
+
+def lsp(folder):
+    put_text_back_into_terminal_input_buffer("ls "+folder+'\n')
+
+## =====================

@@ -114,7 +114,7 @@ class TestGy(unittest.TestCase):
 
     def test_branch_merge_to(self):
         return
-        gy.merge(to_branch='master')
+        gy.merge2(to_branch='master')
 
 
     def test_merge(self):
@@ -179,7 +179,7 @@ class TestGy(unittest.TestCase):
 
     def test_gy(self):
         return
-        gy.gy()
+        gy.main()
 
 
 

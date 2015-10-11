@@ -5,6 +5,13 @@ from __future__ import print_function
 import os,sys
 
 
+from os.path import dirname,basename
+
+def module_name(__file__):
+    return basename(dirname(__file__))
+
+
+
 def get_script_name(__file__):
     # return os.path.basename(sys.argv[0])
     return os.path.split(os.path.realpath(__file__))[1]

@@ -19,7 +19,5 @@ def check_config(filename):
 
 # check_config()
 
-if __name__ == '__main__':
-    pass
 
 

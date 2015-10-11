@@ -195,8 +195,9 @@ def init():
     :return:
     '''
     # subprocess.call['git','init']
+    if len(os.listdir('.')) == 0:
+        subprocess.check_call(['touch','readme.md'])
     subprocess.check_call(['git','init'])
-    subprocess.check_call(['touch','readme.md'])
     commit(m='init commit')
     return "SUCCESS: inited a new project."
 @register
@@ -328,11 +329,10 @@ def init_remote():
 ## 自己分支合并步骤: 1. 初始化init/初始化远程init_remote, 新建dev分支 2. 提交*n, 同步, rebase,(push) 3.merge
 ## 发布步骤:push
 
-# commit, sync, rebase, merge
 
 # commit, sync, (rebase), push/merge, 后一个必须有前一个作为前提.
 
-# commit, sync, push/merge
+# 最终就是, commit, sync, push/merge
 
 @register
 @autokwoargs
@@ -352,7 +352,7 @@ def push(force=False):
 
 ## merge别人的code的时候往往会先在本地把master merge进分支进行合并, 成功后, 再把分支merge进master
 @register
-def merge(to_branch='master'):
+def merge2(to_branch='master'):
     '''
     本地开发的小branch 直接merge进master, 不去远程merge了.
     :return:
@@ -367,18 +367,18 @@ def merge(to_branch='master'):
     # print( shlex.split("git merge --no-ff "+branch_name))
     subprocess_run("git merge --no-ff "+branch_name)
 
-# @register
-# def merge2():
-#
-#     branch_name=find_branch_name()
-#     if 'feature' in branch_name:
-#         feature(merge=True, branch_name=branch_name)
-#     elif 'bug-fix' in branch_name:
-#         bug_fix(merge=True,branch_name=branch_name)
-#     elif 'dev' in branch_name:
-#         dev(merge=True,branch_name=branch_name)
-#     elif 'release' in branch_name:
-#         release(merge=True,branch_name=branch_name)
+@register
+def merge():
+
+    branch_name=find_branch_name()
+    if 'feature' in branch_name:
+        feature(merge=True, branch_name=branch_name)
+    elif 'bug-fix' in branch_name:
+        bug_fix(merge=True,branch_name=branch_name)
+    elif 'dev' in branch_name:
+        dev(merge=True,branch_name=branch_name)
+    elif 'release' in branch_name:
+        release(merge=True,branch_name=branch_name)
 
 
 @register
@@ -390,11 +390,12 @@ def master():
 @register
 @autokwoargs
 def dev(merge=False,branch_name='dev'):
+    # dev is from and merge to master by default
     if not branch_is_exist('dev'):
         newbranch('dev')
     checkout('dev')
     if merge:
-        merge('master')
+        merge2('master')
 @register
 @autokwoargs
 def feature(merge=False,delete=False,name=None,branch_name='feature'):
@@ -402,10 +403,10 @@ def feature(merge=False,delete=False,name=None,branch_name='feature'):
         branch_name+='-'+name
     father_name='dev'
     if not branch_is_exist(branch_name):
-        newbranch(branch_name)
+        newbranch(branch_name,from_branch=father_name)
     checkout(branch_name)
     if merge:
-        merge(father_name)
+        merge2(father_name)
     if delete:
         checkout(father_name)
         delete_branch(branch_name)
@@ -416,11 +417,11 @@ def release(merge=False,delete=False,tag=None,branch_name='release'):
         branch_name+='-'+tag
     father_name='dev'
     if not branch_is_exist(branch_name):
-        newbranch(branch_name)
+        newbranch(branch_name,from_branch=father_name)
     checkout(branch_name)
     if merge:
-        merge('dev')
-        merge('master')
+        merge2('dev')
+        merge2('master')
         # if tag:
         git_tag(branch_name)
     if delete:
@@ -434,11 +435,11 @@ def bug_fix(merge=False,delete=False,tag=None,branch_name='bug-fix'):
     father_name='master'
 
     if not branch_is_exist(branch_name):
-        newbranch(branch_name)
+        newbranch(branch_name,from_branch=father_name)
     checkout(branch_name)
     if merge:
-        merge('dev')
-        merge('master')
+        merge2('dev')
+        merge2('master')
         # if tag:
         git_tag(branch_name)
     if delete:
@@ -501,7 +502,7 @@ bug: 创建, 合并, 删除
 '''
 
 
-def gy():
+def main():
     # alternative分派, 默认分派是函数名, 用字典可以修改默认分派名, 用@kwoargs可以对关键字参数进行分派
     # run(hello_world,alt={"vvv":version, "no_capitalized":hello_world})
 
@@ -521,4 +522,4 @@ def gy():
     run(commands,description=description)
 
 if __name__ == '__main__':
-    gy()
+    main()
