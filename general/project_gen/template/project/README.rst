@@ -1,7 +1,7 @@
 common utils for python
 ====================
 
-this package include some useful general libs in python, include:
+this package include some useful common utils in python, include:
 
 - frequently used decorators
 - monkey patch for class
@@ -12,7 +12,7 @@ this package include some useful general libs in python, include:
 
 install
 =========
-pip install general
+pip install commutils
 
 how to use
 ===========

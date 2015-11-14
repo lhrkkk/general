@@ -1,0 +1,30 @@
+- aga:
+  - aga one pass:
+      - ga compute:
+          - sample.ga: {constraned: true}
+          # 参数怎么向外找! 调用之前预处理!
+          - compute.mm: {}
+          # 无参数怎么办, 传递空字典! 如果可以默认为None更好!
+          - merge: {rmsd_range: 0.1}
+          - cut: {energy_range: 21}
+        when: converged
+        # 集合需要带一轮计算的历史, 最后可以有converge列表
+      - dft compute:
+          - sample: none
+          - cut: 10num
+          - compute: dft
+          - to_ensemble: new_ensemble
+      - fit:
+          - fit: forcebalance, ensemlbe, new_ensemble
+      - collect dft:
+          - collect: new_ensemble
+      - collect ga:
+          - collect: ensemlbe
+    times: 20
+    #对齐秘诀: 要重复谁, 就和谁对齐.
+  - output:
+      - cut: collect_ensemlbe,20
+      - cut: ensemble
+  - analysis:
+      - 1
+      - 2
