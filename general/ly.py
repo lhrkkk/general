@@ -15,7 +15,7 @@ import re
 
 from jinja2 import Template
 
-import general.yml_config as config
+import general.gs as config
 from general.cli import (autokwoargs, cd, register_maker, run, subprocess_run,
                          subprocess_shell, wrapper_decorator)
 from general.gy import commit, push
