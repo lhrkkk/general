@@ -50,6 +50,22 @@ def check_setup_py(f,*args,**kwargs):
         return f(*args,**kwargs)
 
 
+
+## register放在最后, 这样才能被clize访问到最终的函数
+@register
+@check_setup_py
+def init():
+    '''
+    hello
+    :return:
+    '''
+    clean_build()
+    # todo: 这里有问题, 另外初始化环境的时候需不要ly以及相应依赖
+    command='pip install pip-tools&&pip-compile&&pip-sync'
+    subprocess_run(command)
+
+
+
 ## register放在最后, 这样才能被clize访问到最终的函数
 @register
 @check_setup_py
@@ -210,7 +226,7 @@ def publish():
     push()
     build()  # build只生成dist目录的压缩包
     upload() # 生成压缩包并上传
-    self_update() # 用本地的代码直接build到build目录, 然后安装
+    # self_update() # 用本地的代码直接build到build目录, 然后安装
 
 # @register
 # def local_publish():
