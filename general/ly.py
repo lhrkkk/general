@@ -119,7 +119,7 @@ def upload(test=False):
 @check_setup_py
 @autokwoargs
 def pip_install(test=False):
-    command="pip install -i https://pypi.python.org/pypi commutils --user --upgrade"
+    command="pip install -i https://pypi.python.org/pypi general --user --upgrade"
     subprocess_run(command)
 
 @register

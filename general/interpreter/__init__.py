@@ -5,12 +5,21 @@
 
 
 
-from .loader import call,callrun
+# push, 然后service会自动的run.
 
 
-
-
-__all__ = [
-
-
-]
+# from .loader import call,callrun
+# from .runner import run_conf
+#
+# class Interpreter():
+#     def __init__(self,root):
+#         self.root=root
+#
+#     def run(self,task):
+#         run_conf(task)
+#
+#
+# __all__ = [
+#
+#
+# ]

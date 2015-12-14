@@ -8,11 +8,8 @@ import sys
 from os.path import basename, dirname
 
 
-def module_name(__file__):
-    return basename(dirname(__file__))
-
-
-
+# def get_module_name(__file__):
+#     return basename((__file__))
 
 def get_script_name(__file__):
     # return os.path.basename(sys.argv[0])

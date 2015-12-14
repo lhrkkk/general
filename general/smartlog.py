@@ -14,8 +14,25 @@ ROOT_FORMAT = '%(module)s %(levelname)s [-] %(funcName)s: %(message)s'
 # %(name)s
 # %(lineno)s
 
-def set_root_logger(level = logging.INFO, filename=None,filemode = 'w', format = ROOT_FORMAT):
+def set_root_logger(level = logging.INFO, filename=None,filemode = 'w', format = ROOT_FORMAT,debug=False):
     # filename=os.path.basename(__file__)+'.rootlog'
+    if debug==True:
+        level='DEBUG'
+    if type(level) is str:
+        level=level.upper()
+        if level == 'DEBUG':
+            level = logging.DEBUG
+        elif level == 'INFO':
+            level = logging.INFO
+        elif level == 'WARNING':
+            level = logging.WARNING
+        elif level == 'ERROR':
+            level = logging.ERROR
+        elif level == 'CRITICAL':
+            level = logging.CRITICAL
+
+    # print "===================",level
+
     logging.basicConfig( level = level, filename=None, filemode = filemode, format = format)
 
 def clear_logger(logger):

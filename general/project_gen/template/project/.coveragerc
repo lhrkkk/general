@@ -1,7 +1,7 @@
 [run]
 branch = True
-source = commutils
-omit = commutils/tests/*
+source = general
+omit = general/tests/*
 
 [report]
 ignore_errors = True

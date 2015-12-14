@@ -5,14 +5,14 @@ this package include some useful common utils in python, include:
 
 - frequently used decorators
 - monkey patch for class
-- reflection, smartlog and yml_config and so on 
+- reflection, smartlog and yml_config and so on
 - cli interface tools
 - git workflow tools
 - project management tools, contains a scaffold, a update command to
 
 install
 =========
-pip install commutils
+pip install general
 
 how to use
 ===========

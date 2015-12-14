@@ -12,12 +12,13 @@ import time
 def time_count(function, *args, **kwargs):
     tStart = time.time()#計時開始
 
-    function(*args,**kwargs)
+    ans=function(*args,**kwargs)
 
     tEnd = time.time()#計時結束
     #列印結果
     print "[ %s ] cost %f sec" % (function.__name__,tEnd - tStart)#會自動做近位
     # print tEnd - tStart#原型長這樣
+    return ans
 
 def print_time(fun):
     start = time.clock()

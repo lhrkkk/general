@@ -5,6 +5,6 @@
 
 import pbr.version
 
-from general.reflection import module_name
+from general.reflection import get_package_name
 
-version_info = pbr.version.VersionInfo(module_name(__file__))
+version_info = pbr.version.VersionInfo(get_package_name(__file__))

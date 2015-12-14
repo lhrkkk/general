@@ -1,0 +1,20 @@
+# 执行任务的配置选项
+# 串行任务用列表，开关用字典
+
+---
+
+- name: a task
+  vars:
+  conformer:
+  roles:
+    - sys
+    - ga
+    - good
+
+  tasks:
+    - name:
+      vars:
+      dosomething:
+
+  handle:
+    handle1: somehandle
