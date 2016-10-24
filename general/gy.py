@@ -230,7 +230,7 @@ def pull():
 
 @register
 def reset():
-    # to1do: implement the reset
+    # todo: implement the reset
     '''
     :return:
     '''

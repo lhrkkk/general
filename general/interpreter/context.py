@@ -11,6 +11,7 @@ import pymongo
 
 from pymongo import MongoClient
 client = MongoClient(host=gs.CONF.mongo_server, port=gs.CONF.mongo_port)
+# client = MongoClient(host=gs.CONF.mongo_server, port=gs.CONF.mongo_port, connect=False)
 db=client['labkit']
 context_collection=db['context']
 
