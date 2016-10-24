@@ -88,11 +88,11 @@ def eval_tree_local(tree):
 
         return ans
 
-from labkit.scheduler.push import bq
+from ms.scheduler.push import bq
 # from labkit.scheduler.push import deal_with_line
 import  time
 
-from labkit.ensemble.ensemble import Ensemble
+from ms.ensemble.ensemble import Ensemble
 
 def deal_with_line(module_name, args):
     '''

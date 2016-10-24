@@ -5,7 +5,7 @@
 from general import gs
 log=gs.get_logger(__name__,debug=False)
 
-import labkit.init_gs
+import ms.init_gs
 
 import pymongo
 
@@ -57,7 +57,7 @@ def run(conf):
     return True
 
 def selfrun():
-    import labkit.init_gs
+    import ms.init_gs
     from general.interpreter.loader import callrun
     callrun(__file__)
 if __name__ == '__main__':
