@@ -110,7 +110,7 @@ def upload(test=False):
     else:
         command='python setup.py register -r pypi'
         subprocess_run(command)
-        command='python setup.py sdist upload -r pypi '
+        command='虚 '
         subprocess_run(command)
 
 

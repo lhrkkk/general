@@ -140,7 +140,7 @@ class TestGy(unittest.TestCase):
 
     def test_delete_branch(self):
         return
-        gy.delete_branch(branch)
+        gy.drop(branch)
 
 
     def test_git_tag(self):
@@ -175,7 +175,7 @@ class TestGy(unittest.TestCase):
 
     def test_new(self):
         return
-        gy.new(branch_name)
+        gy.switch(branch_name)
 
 
     def test_gy(self):

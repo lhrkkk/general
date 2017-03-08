@@ -255,7 +255,7 @@ def merge(to_branch='master'):
 
 @register
 # @kwoargs('from_branch')
-def new(branch_name, from_branch='master'):
+def switch(branch_name, from_branch='master'):
     '''
     from the newest master checkout a new branch named branch_name, 要先pull
     :param branch_name:
@@ -269,13 +269,18 @@ def new(branch_name, from_branch='master'):
             subprocess.check_call(['git', 'pull'])
         except:
             print("ERROR: no remote source specified")
-            flag = raw_input("do you want to continue? [y(default)/n]:")
-
+            flag = raw_input("Do you want to continue? [y(default)/n]:")
+            # todo: 修改 new 为 switch 并且处理 remote 分支存在的问题.
         if flag == 'y' or flag == 'yes':
             subprocess.check_call(['git', 'checkout', '-b', branch_name])
             return "SUCCESS: new branch %s created and checked out" % branch_name
         else:
             return ("command canceled")
+    else:
+        flag = raw_input("Branch does not exist. Do you want to create a new one ? [y(default)/n]:")
+        if flag == 'y' or flag == 'yes':
+
+            subprocess.check_call(['git', 'checkout', branch_name])
 
 
 @register
@@ -329,8 +334,8 @@ def push(force=False):
 
 
 @register
-def delete_branch(branch):
-    subprocess_check_run("git branch -d " + branch)
+def drop(branch):
+    subprocess_run("git branch -d " + branch)
 
 
 def main():
