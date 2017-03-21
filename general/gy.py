@@ -261,6 +261,7 @@ def switch(branch_name, from_branch='master'):
     :param branch_name:
     :return:
     '''
+    from_branch='master'
 
     if not branch_is_exist(branch_name):
         subprocess.check_call(['git', 'checkout', from_branch])
@@ -269,7 +270,7 @@ def switch(branch_name, from_branch='master'):
             subprocess.check_call(['git', 'pull'])
         except:
             print("ERROR: no remote source specified")
-            flag = raw_input("Do you want to continue? [y(default)/n]:")
+            flag = raw_input("Do you want to checkout from local master? [y(default)/n]:")
             # todo: 修改 new 为 switch 并且处理 remote 分支存在的问题.
         if flag == 'y' or flag == 'yes':
             subprocess.check_call(['git', 'checkout', '-b', branch_name])
@@ -277,10 +278,10 @@ def switch(branch_name, from_branch='master'):
         else:
             return ("command canceled")
     else:
-        flag = raw_input("Branch does not exist. Do you want to create a new one ? [y(default)/n]:")
-        if flag == 'y' or flag == 'yes':
+        # flag = raw_input("Branch does not exist. Do you want to create a new one ? [y(default)/n]:")
+        # if flag == 'y' or flag == 'yes':
 
-            subprocess.check_call(['git', 'checkout', branch_name])
+        subprocess.check_call(['git', 'checkout', branch_name])
 
 
 @register
@@ -343,13 +344,15 @@ def main():
     # run(hello_world,alt={"vvv":version, "no_capitalized":hello_world})
 
     # 分派必须显示说明, 可以传入列表
+    # todo: description 无法打印漂亮的表格.
+
     description = '''
     主要用法
 
-    gy new_branch ;
+    gy switch ;
     gy commit ;
     gy push ;
-    gy delete_branch ;
+    gy drop ;
 
     次要用法
 
