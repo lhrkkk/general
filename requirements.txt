@@ -4,29 +4,100 @@
 #
 #    pip-compile requirements.in
 #
-argparse==1.4.0           # via oslo.config, stevedore
-babel==2.1.1              # via debtcollector, oslo.context, oslo.i18n, oslo.log, oslo.serialization, oslo.utils
+argparse==1.4.0
+    # via
+    #   oslo.config
+    #   stevedore
+babel==2.1.1
+    # via
+    #   debtcollector
+    #   oslo.context
+    #   oslo.i18n
+    #   oslo.log
+    #   oslo.serialization
+    #   oslo.utils
 clize==3.0
-debtcollector==0.10.0     # via oslo.log, oslo.utils
-funcsigs==0.4             # via sigtools
-iso8601==0.1.11           # via oslo.log, oslo.serialization, oslo.utils
+    # via -r requirements.in
+debtcollector==0.10.0
+    # via
+    #   oslo.log
+    #   oslo.utils
+iso8601==0.1.11
+    # via
+    #   oslo.log
+    #   oslo.serialization
+    #   oslo.utils
 jinja2==2.8
-markupsafe==0.23          # via jinja2
-monotonic==0.4            # via oslo.utils
-msgpack-python==0.4.6     # via oslo.serialization
-netaddr==0.7.18           # via oslo.config, oslo.utils
-netifaces==0.10.4         # via oslo.utils
+    # via -r requirements.in
+markupsafe==0.23
+    # via jinja2
+monotonic==0.4
+    # via oslo.utils
+msgpack-python==0.4.6
+    # via oslo.serialization
+netaddr==0.7.18
+    # via
+    #   oslo.config
+    #   oslo.utils
+netifaces==0.10.4
+    # via oslo.utils
 oslo.config==2.6.0
-oslo.context==0.8.0       # via oslo.log
+    # via
+    #   -r requirements.in
+    #   oslo.log
+oslo.context==0.8.0
+    # via oslo.log
 oslo.i18n==2.7.0
+    # via
+    #   -r requirements.in
+    #   oslo.log
+    #   oslo.utils
 oslo.log==1.13.0
-oslo.serialization==1.11.0  # via oslo.log
-oslo.utils==2.7.0         # via oslo.log, oslo.serialization
+    # via -r requirements.in
+oslo.serialization==1.11.0
+    # via oslo.log
+oslo.utils==2.7.0
+    # via
+    #   oslo.log
+    #   oslo.serialization
 pbr==1.8.1
-pytz==2015.7              # via babel, oslo.serialization, oslo.utils
-pyyaml==3.11
+    # via
+    #   -r requirements.in
+    #   debtcollector
+    #   oslo.context
+    #   oslo.i18n
+    #   oslo.log
+    #   oslo.serialization
+    #   oslo.utils
+    #   stevedore
+pyinotify==0.9.6
+    # via oslo.log
+pytz==2015.7
+    # via
+    #   babel
+    #   oslo.serialization
+    #   oslo.utils
+pyyaml==5.4
+    # via -r requirements.in
 sh==1.11
+    # via -r requirements.in
 sigtools==1.0
+    # via
+    #   -r requirements.in
+    #   clize
 six==1.10.0
-stevedore==1.9.0          # via oslo.config
-wrapt==1.10.5             # via debtcollector
+    # via
+    #   -r requirements.in
+    #   clize
+    #   debtcollector
+    #   oslo.config
+    #   oslo.i18n
+    #   oslo.log
+    #   oslo.serialization
+    #   oslo.utils
+    #   sigtools
+    #   stevedore
+stevedore==1.9.0
+    # via oslo.config
+wrapt==1.10.5
+    # via debtcollector
